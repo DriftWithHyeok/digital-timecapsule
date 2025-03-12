@@ -11,11 +11,12 @@ int main() {
     char name[50], message[200];
 
     printf("이름을 입력하세요: ");
-    scanf("%s", name);
-    getchar(); // 버퍼 비우기
+    fgets(name, sizeof(name), stdin); // 전체 이름 입력 받기
+    name[strcspn(name, "\n")] = 0; // 개행 문자 제거
 
     printf("미래의 나에게 메시지를 입력하세요: ");
     fgets(message, sizeof(message), stdin);
+    message[strcspn(message, "\n")] = 0; // 개행 문자 제거
 
     fprintf(file, "%s,%s\n", name, message);
     fclose(file);
