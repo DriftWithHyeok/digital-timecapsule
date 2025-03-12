@@ -6,37 +6,45 @@
     <title>디지털 타임캡슐</title>
 </head>
 <body>
-    <h1>1년 후의 나에게 보내는 메시지</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>이름</th>
-                <th>메시지</th>
-            </tr>
-        </thead>
-        <tbody id="messageTable"></tbody>
-    </table>
+    <h1>디지털 타임캡슐</h1>
+    
+    <form id="messageForm">
+        <input type="text" id="name" placeholder="이름 입력" required>
+        <input type="email" id="email" placeholder="이메일 입력" required>
+        <textarea id="message" placeholder="1년 후의 나에게 메시지 입력" required></textarea>
+        <button type="submit">저장하기</button>
+    </form>
+
+    <p id="statusMessage"></p>
 
     <script>
-        fetch("messages.csv")
-            .then(response => response.text())
-            .then(data => {
-                let rows = data.split("\n");
-                let table = document.getElementById("messageTable");
+        const scriptURL = "YOUR_GOOGLE_APPS_SCRIPT_URL"; // 여기에 복사한 URL 넣기
 
-                rows.forEach(row => {
-                    let cols = row.split(",");
-                    if (cols.length === 2) {
-                        let tr = document.createElement("tr");
-                        cols.forEach(col => {
-                            let td = document.createElement("td");
-                            td.innerText = col.trim();
-                            tr.appendChild(td);
-                        });
-                        table.appendChild(tr);
+        document.getElementById("messageForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let message = document.getElementById("message").value;
+
+            if (name && email && message) {
+                let data = { name: name, email: email, message: message };
+
+                fetch(scriptURL, {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: {
+                        "Content-Type": "application/json"
                     }
-                });
-            });
+                })
+                .then(response => response.text())
+                .then(result => {
+                    document.getElementById("statusMessage").innerText = "메시지가 저장되었습니다!";
+                    document.getElementById("messageForm").reset();
+                })
+                .catch(error => console.error("오류 발생:", error));
+            }
+        });
     </script>
 </body>
 </html>
